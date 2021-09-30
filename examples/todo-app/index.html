@@ -1,0 +1,38 @@
+<html>
+
+<head>
+  <script src="//unpkg.com/vanu"></script>
+</head>
+
+<body>
+  <div style="display: flex;justify-content: center;margin-top: 50px;" id="app"></div>
+  <!-- your js -->
+  <script>
+    const app = vanu({ target: "#app" });
+    app.get("/", ({ html, render, useValue }) => {
+      const input = (id) => document.getElementById(id);
+      const todo = useValue(["Apple", "Mango", "Leci"]);
+      const onSubmit = (e) => {
+        e.preventDefault();
+        todo.value = [input("txtTodo").value, ...todo.value];
+        input("txtTodo").value = "";
+      }
+      render(() => html`
+        <div style="width: 30%;">
+          <form onsubmit="${onSubmit}">
+            <input id="txtTodo" style="width: 80%" placeholder="Todo text"/>
+            <button type="submit" style="width: 18%">Add</button>
+          </form>
+          <hr/>
+          ${todo.value.map(name => html`
+            <li>${name}</li>  
+          `).join("")}
+        </div>
+      `)
+    });
+
+    app.listen();
+  </script>
+</body>
+
+</html>

@@ -5,7 +5,7 @@ function vanu() {
   let timeout = opts.timeout || 300, elem = opts.target;
   let parse = opts.parse || ((str) => Object.fromEntries(new w.URLSearchParams(str).entries()));
   if (typeof elem === "string") elem = w.document.querySelector(elem);
-  let lazy = (js, name) => ({ load }) => load(baseController + js, name);
+  let lazy = (js, name) => ({ load }) => load(js, name);
   let cFile = (file) => file.indexOf("?") !== -1 ? file.split("?")[0] : file;
   let wares = [], ctrl = {};
   let onError = (_, s) => s.render(() => ""), unmount, current, vNow = "?v=" + Date.now(), isTimeout;
@@ -146,11 +146,13 @@ function vanu() {
       ctx.html = this.html;
       ctx.go = (url, type) => goState(url, type, true);
       ctx.unmount = (fn) => { unmount = fn; return ctx; };
-      if (ctx.__uServerData) {
-        if (!isServer) ctx.initData = void 0;
-        else {
-          const initData = (w.document.getElementById("__uServerData") || {}).textContent || ctx.__uServerData;
-          ctx.initData = typeof initData === "string" ? JSON.parse(initData) : initData;
+      if (!isServer) {
+        ctx.initData = void 0;
+      } else {
+        if (ctx.__uServerData) {
+          ctx.initData = ctx.__uServerData;
+        } else if (w.document.getElementById("__uServerData")) {
+          ctx.initData = JSON.parse(w.document.getElementById("__uServerData").textContent);
         }
       }
       isServer = false;
@@ -204,6 +206,7 @@ function vanu() {
           if (current !== w.location.hash) w.__uHandler();
         });
       } else {
+        isServer = true;
         if (initData) req.__uServerData = initData;
         req.res = req.res || res;
         req.pathname = req.path || req.url.split("?")[0];
