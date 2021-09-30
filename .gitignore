@@ -1,0 +1,6 @@
+node_modules
+/ssr
+/dev
+yarn.lock
+.npmignore
+/index.html
