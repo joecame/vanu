@@ -10,17 +10,20 @@
   <script>
     const app = vanu({ target: "#app" });
     app.get("/", ({ html, render, useValue }) => {
-      const input = (id) => document.getElementById(id);
+      const todoText = useValue("");
       const todo = useValue(["Apple", "Mango", "Leci"]);
       const onSubmit = (e) => {
         e.preventDefault();
-        todo.value = [input("txtTodo").value, ...todo.value];
-        input("txtTodo").value = "";
+        todo.value = [todoText.value, ...todo.value];
+        todoText.value = "";
+      }
+      const onChangeInput = (e) => {
+        todoText.value = e.target.value;
       }
       render(() => html`
         <div style="width: 30%;">
           <form onsubmit="${onSubmit}">
-            <input id="txtTodo" style="width: 80%" placeholder="Todo text"/>
+            <input onchange="${onChangeInput}" value="${todoText.value}" style="width: 80%" placeholder="Todo text"/>
             <button type="submit" style="width: 18%">Add</button>
           </form>
           <hr/>

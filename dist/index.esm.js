@@ -20,8 +20,12 @@ function vanu() {
     if (node.nodeType === 8) return 'comment';
     return node.tagName.toLowerCase();
   };
-  const getNodeContent = function (node) {
+  const getNodeContent = function (node, attr) {
     if (node.childNodes && node.childNodes.length > 0) return null;
+    if (attr) {
+      if (typeof node[attr] !== "string") return node.getAttribute(attr);
+      return node[attr];
+    }
     return node.textContent;
   };
   const stringToHTML = (str) => {
@@ -43,10 +47,23 @@ function vanu() {
         elem.appendChild(node.cloneNode(true));
         return;
       }
-      if (getNodeType(node) !== getNodeType(domNodes[index])) {
+      let type = getNodeType(node);
+      let domType = getNodeType(domNodes[index]);
+      if (type !== domType) {
         domNodes[index].parentNode.replaceChild(node.cloneNode(true), domNodes[index]);
         return;
       }
+      if (node.attributes && node.attributes.length) {
+        let i = 0, len = node.attributes.length;
+        while(i < len) {
+          const attr = node.attributes[i];
+          if (attr.name) {
+            const tpl = getNodeContent(node, attr.name) || "";
+            const tplDom = getNodeContent(domNodes[index], attr.name) || "";
+            if (tpl !== tplDom) domNodes[index][attr.name] = tpl;
+          }
+          i++;
+        }      }
       let templateContent = getNodeContent(node);
       if (templateContent && templateContent !== getNodeContent(domNodes[index])) {
         domNodes[index].textContent = templateContent;

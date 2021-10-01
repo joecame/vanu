@@ -1,6 +1,6 @@
 ## Vanu
 
-[![npm version](https://img.shields.io/badge/npm-0.0.2-blue.svg)](https://npmjs.org/package/vanu) 
+[![npm version](https://img.shields.io/badge/npm-0.0.3-blue.svg)](https://npmjs.org/package/vanu) 
 [![License](https://img.shields.io/:license-mit-blue.svg)](http://badges.mit-license.org)
 [![download-url](https://img.shields.io/npm/dm/vanu.svg)](https://npmjs.org/package/vanu)
 
@@ -9,7 +9,7 @@ Router based vanilla app.
 [See examples](https://github.com/herudi/vanu/tree/master/examples)
 
 ## Features
-- Just ~2kb gzipped, ~4kb minified.
+- Just ~2kb gzipped, ~5kb minified.
 - Middleware support.
 - LazyLoad js support.
 - SSR support.
