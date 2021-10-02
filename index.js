@@ -64,7 +64,11 @@ function vanu() {
             const tpl = getNodeContent(node, attr.name) || "";
             const tplDom = getNodeContent(domNodes[index], attr.name) || "";
             if (tpl !== tplDom) {
-              domNodes[index][attr.name] = tpl;
+              if (tpl === "false") {
+                domNodes[index].removeAttribute(attr.name);
+              } else {
+                domNodes[index][attr.name] = tpl;
+              }
             }
           }
           i++;
@@ -219,7 +223,7 @@ function vanu() {
       wares = wares.concat([].slice.call(arguments));
       return this;
     },
-    listen(req, res, initData) {
+    listen(req, res, initData, callback) {
       if (!req) {
         if (!w.__uHandler) w.__uHandler = (e) => this.handle(e);
         w.__uHandler();
@@ -233,13 +237,15 @@ function vanu() {
         req.res = req.res || res;
         req.pathname = req.path || req.url.split("?")[0];
         req.loadScript = req.loadScript || ((file) => require(__baseClient + file));
-        req.render = (fn) => {
-          elem.innerHTML = fn();
+        req.render = req.render || ((fn) => {
+          const tpl = fn();
+          elem.innerHTML = tpl;
           let html = w.document.documentElement.outerHTML.replace("{{INIT_SERVER_DATA}}", initData ? `<script id="__uServerData" type="application/json">${JSON.stringify(initData)}</script>` : "")
+          if (callback) return callback(html, tpl);
           if (res.send) return res.send(html);
           res.setHeader("Content-Type", "text/html; charset=utf-8");
           res.end(html);
-        }
+        })
         this.handle(true, req);
       }
     },

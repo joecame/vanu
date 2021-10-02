@@ -1,7 +1,7 @@
 {
   "name": "vanu",
   "description": "Router based vanilla app.",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "main": "dist/index.js",
   "browser": "dist/index.min.js",
   "unpkg": "dist/index.min.js",

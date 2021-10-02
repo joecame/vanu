@@ -28,7 +28,7 @@ export interface IVanu<
   on(name: 'van:error' | 'van:start' | 'van:end', fn: any): this;
   handle(): void;
   use(...middlewares: Array<Handler<Context>>): this;
-  listen(req?: any, res?: any, initData?: Record<string, any>): this;
+  listen(req?: any, res?: any, initData?: Record<string, any>, callback?: (elemString: string, template: string) => void): this;
   html(arr: any, ...subs: any): any;
   get(url: string, ...handlers: Array<Handler<Context> | Record<string, any>>): this;
 }
