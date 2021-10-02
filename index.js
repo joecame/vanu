@@ -24,15 +24,15 @@ function vanu() {
     return node.tagName.toLowerCase();
   };
   const getNodeContent = function (node, attr) {
-    if (node.childNodes && node.childNodes.length > 0) return null;
     if (attr) {
       if (typeof node[attr] !== "string") return node.getAttribute(attr);
       return node[attr];
     }
+    if (node.childNodes && node.childNodes.length > 0) return null;
     return node.textContent;
   };
   const stringToHTML = (str) => {
-    const el = w.document.createElement("body");
+    const el = w.document.createElement("div");
     el.innerHTML = str;
     return el;
   };
@@ -63,7 +63,9 @@ function vanu() {
           if (attr.name) {
             const tpl = getNodeContent(node, attr.name) || "";
             const tplDom = getNodeContent(domNodes[index], attr.name) || "";
-            if (tpl !== tplDom) domNodes[index][attr.name] = tpl;
+            if (tpl !== tplDom) {
+              domNodes[index][attr.name] = tpl;
+            }
           }
           i++;
         };
@@ -115,7 +117,7 @@ function vanu() {
   }
   w.__uEvent = (i, t, e) => cbs[i].call(t, e);
   const toFunc = (cb) => {
-    const name = current + (cb.name || ++countCb);
+    const name = (cb.name || ++countCb);
     cbs[name] = cb;
     return `return __uEvent('${name}', this, event)`;
   }
