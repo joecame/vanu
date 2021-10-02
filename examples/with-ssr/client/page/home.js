@@ -1,8 +1,8 @@
-async function home({ html, render, useValue, initData }) {
+async function home({ html, render, useValue, initServerData }) {
   document.title = "Welcome Home";
   const data = useValue([]);
-  if (initData) {
-    data.value = initData;
+  if (initServerData) {
+    data.value = initServerData;
   } else {
     const res = await fetch("/api/home");
     data.value = await res.json();

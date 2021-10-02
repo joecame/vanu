@@ -58,7 +58,7 @@ function vanu() {
       }
       if (node.attributes && node.attributes.length) {
         let i = 0, len = node.attributes.length;
-        while(i < len) {
+        while (i < len) {
           const attr = node.attributes[i];
           if (attr.name) {
             const tpl = getNodeContent(node, attr.name) || "";
@@ -169,12 +169,12 @@ function vanu() {
       ctx.go = (url, type) => goState(url, type, true);
       ctx.unmount = (fn) => { unmount = fn; return ctx; };
       if (!isServer) {
-        ctx.initData = void 0;
+        ctx.initServerData = void 0;
       } else {
         if (ctx.__uServerData) {
-          ctx.initData = ctx.__uServerData;
+          ctx.initServerData = ctx.__uServerData;
         } else if (w.document.getElementById("__uServerData")) {
-          ctx.initData = JSON.parse(w.document.getElementById("__uServerData").textContent);
+          ctx.initServerData = JSON.parse(w.document.getElementById("__uServerData").textContent);
         }
       }
       const next = (err) => err ? onError(err, ctx) : fns[i++](ctx, next);
@@ -235,14 +235,7 @@ function vanu() {
         req.loadScript = req.loadScript || ((file) => require(__baseClient + file));
         req.render = (fn) => {
           elem.innerHTML = fn();
-          if (!w.document.getElementById("__uServerData") && initData) {
-            const script = w.document.createElement("script");
-            script.id = "__uServerData";
-            script.setAttribute("type", "application/json")
-            script.append(JSON.stringify(initData));
-            w.document.head.appendChild(script);
-          }
-          const html = w.document.documentElement.outerHTML;
+          let html = w.document.documentElement.outerHTML.replace("{{INIT_SERVER_DATA}}", initData ? `<script id="__uServerData" type="application/json">${JSON.stringify(initData)}</script>` : "")
           if (res.send) return res.send(html);
           res.setHeader("Content-Type", "text/html; charset=utf-8");
           res.end(html);

@@ -3,7 +3,7 @@ export interface IContext {
   params: Record<string, any>;
   query: Record<string, any>;
   isServer: boolean;
-  initData: Record<string, any> | undefined;
+  initServerData: Record<string, any> | undefined;
   load(file: string, name?: string): void;
   useValue(defaultValue: any): any;
   render(fn: () => string): void;
