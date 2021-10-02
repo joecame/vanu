@@ -7,7 +7,10 @@
   function vanu() {
     const w = window;
     const opts = arguments[0] || {};
-    let baseController = opts.baseController || "", base = opts.base || "";
+    const _base = w.document.querySelector("base");
+    let baseController = opts.baseController || "", base = _base ? _base.getAttribute("href") : "";
+    if (opts.base) base = opts.base;
+    if (base === "/") base = "";
     let timeout = opts.timeout || 300, elem = opts.target;
     let parse = opts.parse || ((str) => Object.fromEntries(new w.URLSearchParams(str).entries()));
     if (typeof elem === "string") elem = w.document.querySelector(elem);
@@ -90,32 +93,30 @@
       });
     };
     const listenLink = (isRender) => {
-      let doc = isRender ? elem : w.document;
-      let links = doc.querySelectorAll("[u-link]");
+      let links = (isRender ? elem : w.document).querySelectorAll("[u-link]");
       links.forEach((link) => {
         link.handle = (e) => {
-          let loc = link.getAttribute("href") || link.getAttribute("u-link");
-          if (loc === "#") loc = "#/";
-          else if (loc.startsWith("/#/")) loc = loc.substring(1);
           e.preventDefault();
           e.stopPropagation();
+          let loc = link.getAttribute("href") || link.getAttribute("u-link");
           if (current !== loc) {
             w.history.pushState({}, "", loc);
             w.__uHandler();
-          }      };
+          }
+        };
         link.addEventListener("click", link.handle);
       });
     };
-    const end = () => {
+    const end = (isListen) => {
       if (isTimeout) clearTimeout(isTimeout);
       dispatch("vanu:end");
-      listenLink(true);
+      if (isListen && !isServer) listenLink(true);
     };
     let cbs = {}, countCb = 0, reRender;
     const render = (fn) => {
-      const templateHTML = stringToHTML(fn());
-      diff(templateHTML, elem);
-      end();
+      const tpl = stringToHTML(fn());
+      diff(tpl, elem);
+      end(tpl.querySelector("[u-link]"));
     };
     w.__uEvent = (i, t, e) => cbs[i].call(t, e);
     const toFunc = (cb) => {
@@ -178,7 +179,6 @@
             ctx.initData = JSON.parse(w.document.getElementById("__uServerData").textContent);
           }
         }
-        isServer = false;
         const next = (err) => err ? onError(err, ctx) : fns[i++](ctx, next);
         ctx.render = ctx.render || ((fn) => {
           reRender = fn;
@@ -215,6 +215,7 @@
         if (!fns) fns = [(s) => s.render(() => "")];
         fns = wares.concat(fns);
         next();
+        isServer = false;
       },
       use() {
         wares = wares.concat([].slice.call(arguments));

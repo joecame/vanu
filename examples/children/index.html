@@ -1,0 +1,40 @@
+<html>
+
+<head>
+  <script src="//unpkg.com/vanu"></script>
+</head>
+
+<body>
+  <div id="app"></div>
+  <!-- your js -->
+  <script>
+    const app = vanu({ target: "#app" });
+    app.use((ctx, next) => {
+      const render = ctx.render;
+      const html = ctx.html;
+      ctx.render = (child) => {
+        const navbar = html`
+          <nav>
+            <a href="#/" u-link>Home</a>
+            <a href="#/about" u-link>About</a>
+          </nav>
+        `;
+        render(() => html`
+          ${navbar}
+          ${child()}
+        `);
+      }
+      next();
+    });
+    app.get("/", ({ html, render }) => {
+      render(() => html`<h1>Home</about>`)
+    });
+    app.get("/about", ({ html, render }) => {
+      render(() => html`<h1>About</about>`)
+    });
+
+    app.listen();
+  </script>
+</body>
+
+</html>

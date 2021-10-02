@@ -1,6 +1,6 @@
 ## Vanu
 
-[![npm version](https://img.shields.io/badge/npm-0.0.3-blue.svg)](https://npmjs.org/package/vanu) 
+[![npm version](https://img.shields.io/badge/npm-0.0.4-blue.svg)](https://npmjs.org/package/vanu) 
 [![License](https://img.shields.io/:license-mit-blue.svg)](http://badges.mit-license.org)
 [![download-url](https://img.shields.io/npm/dm/vanu.svg)](https://npmjs.org/package/vanu)
 
@@ -45,8 +45,9 @@ yarn add vanu
 </head>
 <body>
   <nav>
-    <a href="/#/">Home</a>
-    <a href="/#/about">About</a>
+    <a href="/" u-link>Home</a>
+    <a href="/about" u-link>About</a>
+    <a href="/hello/john" u-link>User John</a>
   </nav>
   <div id="app"></div>
 
@@ -84,12 +85,12 @@ yarn add vanu
 </html>
 ```
 
-## Without Hash
+## With Hash
 ```html
 ...
 <nav>
-  <a href="/" u-link>Home</a>
-  <a href="/about" u-link>About</a>
+  <a href="#/" u-link>Home</a>
+  <a href="#/about" u-link>About</a>
 </nav>
 <div id="app"></div>
 ...
