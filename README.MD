@@ -12,6 +12,9 @@ Demo SSR => https://vanilla-ssr-gilt.vercel.app
 
 ## Features
 - Just ~2kb gzipped, ~5kb minified.
+- No build tools.
+- React like.
+- Router based (express like).
 - Middleware support.
 - LazyLoad js support.
 - SSR support.
@@ -57,6 +60,7 @@ yarn add vanu
   <script>
     const app = vanu({ target: "#app" });
 
+    //counter app home page
     app.get("/", ({ html, render, useValue }) => {
       const count = useValue(0);
       const myClick = () => count.value++;
@@ -66,17 +70,18 @@ yarn add vanu
       `)
     });
 
+    //about page
     app.get("/about", ({ html, render }) => {
       render(() => html`<h1>About</h1>`)
     });
 
-    // params
+    // hello page with params
     app.get("/hello/:name", ({ html, params, render }) => {
       render(() => html`<h1>Hello ${params.name}</h1>`);
     });
 
     // handle not found
-    app.get("*", ({ html }) => {
+    app.get("*", ({ html, render }) => {
       render(() => html`<h1>404 not found</h1>`);
     });
 
@@ -86,6 +91,7 @@ yarn add vanu
 </body>
 </html>
 ```
+> Extension vscode for literal html [lit-html](https://marketplace.visualstudio.com/items?itemName=bierner.lit-html)
 
 ## With Hash
 ```html
@@ -97,8 +103,6 @@ yarn add vanu
 <div id="app"></div>
 ...
 ```
-
-> Extension vscode for literal html [lit-html](https://marketplace.visualstudio.com/items?itemName=bierner.lit-html)
 
 ## Lazy load
 ```js
@@ -124,21 +128,21 @@ function home({ html, render }) {
 ## Middleware
 ```js
 
-function foo(ctx, next) {
+function fooMidd(ctx, next) {
   ctx.foo = "foo";
   next();
 };
-function bar(ctx, next) {
+function barMidd(ctx, next) {
   ctx.bar = "bar";
   next();
 };
 
 const app = vanu({ target: "#app" });
-app.use(foo);
-app.get("/", bar, ({ render, html }) => {
-  render(() => html`<h1>${ctx.foo + ctx.bar}</h1>`);
+app.use(fooMidd);
+app.get("/", barMidd, ({ render, html, foo, bar }) => {
+  render(() => html`<h1>${foo + bar}</h1>`);
 });
-app.get("/user", bar, {
+app.get("/user", barMidd, {
   controller: "/path/to/user.js",
 });
 app.listen();
@@ -169,7 +173,9 @@ app.on("vanu:error", (error, { render, html }) => {
 polka()
   .use(sirv(__baseClient))
   .get("*", (req, res, next) => {
-    clientApp.listen(req, res, initData);
+    clientApp.listen(req, res, initData, callback);
+    //initData and callback optional
+    //callback(html, template)
   })
   .listen(3000);
 ...
