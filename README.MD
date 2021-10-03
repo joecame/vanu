@@ -1,6 +1,6 @@
 ## Vanu
 
-[![npm version](https://img.shields.io/badge/npm-0.0.7-blue.svg)](https://npmjs.org/package/vanu) 
+[![npm version](https://img.shields.io/badge/npm-0.0.8-blue.svg)](https://npmjs.org/package/vanu) 
 [![License](https://img.shields.io/:license-mit-blue.svg)](http://badges.mit-license.org)
 [![download-url](https://img.shields.io/npm/dm/vanu.svg)](https://npmjs.org/package/vanu)
 

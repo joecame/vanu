@@ -29,9 +29,11 @@
       if (node.nodeType === 8) return 'comment';
       return node.tagName.toLowerCase();
     };
+    const getAttr = (node, attr) => node.getAttribute(attr);
     const getNodeContent = function (node, attr) {
       if (attr) {
-        if (typeof node[attr] !== "string") return node.getAttribute(attr);
+        if (attr === "href" || attr === "u-link") return getAttr(node, attr);
+        if (typeof node[attr] !== "string") return getAttr(node, attr);
         return node[attr];
       }
       if (node.childNodes && node.childNodes.length > 0) return null;
@@ -67,8 +69,8 @@
           while (i < len) {
             const attr = node.attributes[i];
             if (attr.name) {
-              const tpl = getNodeContent(node, attr.name) || "";
-              const tplDom = getNodeContent(domNodes[index], attr.name) || "";
+              let tpl = getNodeContent(node, attr.name) || "";
+              let tplDom = getNodeContent(domNodes[index], attr.name) || "";
               if (tpl !== tplDom) {
                 if (tpl === "false") {
                   domNodes[index].removeAttribute(attr.name);
@@ -113,16 +115,15 @@
         link.addEventListener("click", link.handle);
       });
     };
-    const end = (isListen) => {
+    const end = () => {
       if (isTimeout) clearTimeout(isTimeout);
       dispatch("vanu:end");
-      if (isListen && !isServer) listenLink(true);
     };
     let cbs = {}, countCb = 0, reRender;
     const render = (fn) => {
       const tpl = stringToHTML(fn());
       diff(tpl, elem);
-      end(tpl.querySelector("[u-link]"));
+      if (tpl.querySelector("[u-link]") && !isServer) listenLink(true);
     };
     w.__uEvent = (i, t, e) => cbs[i].call(t, e);
     const toFunc = (cb) => {
@@ -189,6 +190,7 @@
         ctx.render = ctx.render || ((fn) => {
           reRender = fn;
           render(fn);
+          end();
         });
         ctx.target = (_elem) => {
           if (!_elem) return;
